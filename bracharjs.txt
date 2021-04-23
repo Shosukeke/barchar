@@ -1,0 +1,190 @@
+
+  //CSV file
+d3.csv("https://info.risesmart.com/hubfs/EVS%20components/LMR_Chart/BARdata.csv", function(error, data) {
+  if (error) throw error;
+
+ // dimensions 
+var margin = {top: 50, right: 0, bottom: 30, left: 90},
+    width = 1150 - margin.left - margin.right,
+    height = 350 - margin.top - margin.bottom;
+var arrow ='⇧'
+const nformat= d3.format(",") ; 
+  
+var svgl= d3.select("#lmr").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+  
+// Add X axis
+ var xScale = d3.scaleBand()
+      .domain(data.map(function(d) { return d.time; }))
+      .range([ 1, width ])
+      .padding(0.4);;
+
+  var xAxis = svgl.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(xScale).tickFormat(function (d) {
+    if (d.includes('jan')) {
+    return d
+        } else if (d.includes('apr')) {
+    return d
+        }else if (d.includes('jul')) {
+    return d
+        }else if(d.includes('oct')) { return d }
+      }))
+      .attr("font-size", '12px');          
+     
+  
+      // Add Y axis
+ var yScale= d3.scaleLinear()
+          .range([ height, 0 ])
+          .domain([ -1000 + d3.min(data, function(d) { return (+d.valueA); })  , d3.max(data, function(d) { return (+d.valueA); })]);
+   var yAxis = svgl.append("g")
+      .call(d3.axisLeft(yScale))
+      .attr("font-size", '12px');
+  
+  
+    // gridlines in y axis function
+  function make_y_gridlines() {		
+      return d3.axisLeft(yScale)
+          .ticks(4)
+    
+  }
+  
+  // Tooltip 
+  var div2= d3.select("#lmr").append("div")	
+    .attr("class", "tooltip2")				
+    .style("opacity", 0);
+     
+  // add the Y gridlines
+  svgl.append("g")			
+      .attr("class", "grid")
+        .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
+   var  text = "employed to employed: "
+  
+   var mapdata = data.map(function(d){return {time: d.time, value:(+d.valueA), indline:d.IndA} });
+ 
+  var bar = svgl.selectAll(".bar")
+      .data(mapdata)
+     .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return xScale(d.time); })
+      .attr("width", xScale.bandwidth())
+      .attr("y", function(d) { return  yScale(+d.value); })
+      .attr("height", function(d) { return height -  yScale(+d.value); })
+      .on("mouseover", function(d,i) {	
+        
+       mapdata.forEach(function(valx,index){
+      if(i == index && i != 0){
+        var preValue = mapdata[index-1]                    
+        var currValue = d;
+        
+        //console.log(preValue.value) 
+        //console.log(currValue.value) 
+    
+        if(parseInt(currValue.value) > parseInt(preValue.value)){
+          arrow= '⇧'
+         }else if(parseInt(currValue.value) < parseInt(preValue.value)){
+           arrow = '⇩'
+         }else{
+           arrow = ''
+         }
+      }else if(i == 0){
+        arrow = ''
+      }
+    })
+          div2.transition()		
+              .duration(200)		
+              .style("opacity", 1);		
+          div2.html( 
+            "<span style='font-size: 14px';>" + text + "<span style='font-size: 20px';> </br>" + nformat(d.value) + "</span>" +
+            "<span style='font-size: 14px';> (" + d.time+ ")</span></br>" +
+            "<span style='font-size: 16px';> "+ arrow +" "+d.indline + "</span>"                       
+            )	       
+             .style("left", (d3.event.pageX) + "px")		
+             .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div2.transition()		
+                .duration(200)		
+                .style("opacity", 0);	
+              });
+
+
+
+ function update(selectedGroup) {
+      
+    
+     if(document.getElementById('radio1').checked){
+  	   mapdata = data.map(function(d){return {time: d.time, value:d.valueA, indline:d.IndA} })
+        text= "employed to employed: "
+        valueLine = "valueA"
+        indexLine= "IndA"
+         xScale.domain(data.map(function(d) { return d.time; })) 
+       // xAxis.call(d3.axisBottom(xScale))
+        yScale.domain([-1000+ d3.min(data, function(d) { return (+d.valueA); })  , d3.max(data, function(d) { return (+d.valueA); })]);
+        yAxis.transition().duration(1000).call(d3.axisLeft(yScale));  
+       ;}
+  	  if(document.getElementById('radio2').checked){
+  	     mapdata = data.map(function(d){return {time: d.time, value:d.valueB, indline:d.IndB} })
+        text= "employed to unemployed: "
+        valueLine = "valueB"
+        indexLine= "IndB"
+      xScale.domain(data.map(function(d) { return d.time; })) 
+        //xAxis.call(d3.axisBottom(xScale))
+         yScale.domain([-100 + d3.min(data, function(d) { return (+d.valueB); })  , d3.max(data, function(d) { return (+d.valueB); })]);
+       yAxis.transition().duration(1000).call(d3.axisLeft(yScale)); 
+        
+        ;}
+  	  if(document.getElementById('radio3').checked){
+  	    mapdata = data.map(function(d){return {time: d.time, value:d.valueC, indline:d.IndC } })
+       text= "employed to not in labor force (‘000): "
+        valueLine = "valueC"
+        indexLine= "IndC"
+     xScale.domain(data.map(function(d) { return d.time; })) 
+     // xAxis.call(d3.axisBottom(xScale))
+        yScale.domain([-100 + d3.min(data, function(d) { return (+d.valueC); }) , d3.max(data, function(d) { return (+d.valueC); })]);
+      yAxis.transition().duration(1000).call(d3.axisLeft(yScale)); 
+     
+     ;}
+    
+            
+      
+      // Give these new data to update line
+       bar
+         .data(mapdata)
+          .transition()
+          .duration(1000)
+          .attr("class", "bar")
+        .attr("x", function(d) { return xScale(d.time); })
+        .attr("width", xScale.bandwidth())
+        .attr("y", function(d) { return  yScale(+d.value); })
+       .attr("height", function(d) { return height - yScale(+d.value); })
+        
+     
+  
+
+
+     
+    }
+
+    // When the button is changed, run the updateChart function
+    d3.select("#selectRadios").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedOption = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        update(selectedOption)
+    })
+  
+  
+
+})
+
+
+
+

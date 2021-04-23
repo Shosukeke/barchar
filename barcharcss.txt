@@ -1,0 +1,58 @@
+
+.bar { 
+  fill: #2175D8;
+ 
+}
+
+div.tooltip2 {	
+    position: absolute;			
+    text-align:left;			
+    width: 250px;					
+    height: 65px;					
+    padding-left: 8px;							
+    font: 14px sans-serif;		
+    background:  #F7F5F0;	
+    border: 1px solid #2175D8;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+
+
+.radiosLMR{
+      display: inline-block;
+    color: #0f1941;
+     font-weight: normal;
+    margin-left: 25px;
+    font-size: 16px;
+    line-height: 15px;
+}
+#selectRadios{ 
+  margin: auto;
+  width: 100%;
+ display: flex;
+ justify-content: center;
+}
+
+
+#radio1 {
+position: inherit;
+  padding: 10px;
+}
+
+#radio2 {
+position: inherit;
+  padding: 10px;;
+}
+
+#radio3 {
+position: inherit;
+  padding: 10px;;
+}
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 1;
+  shape-rendering: crispEdges;
+}
+.grid path {
+  stroke-width:0;
+}

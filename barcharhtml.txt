@@ -1,0 +1,22 @@
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+
+<div id="selectRadios" class="radio__input">
+  <label class="radiosLMR"> 
+    <input id="radio1" type="radio" name="index" value="employed to employed"  checked> employed to employed </label>
+
+  <label class="radiosLMR">
+  <input id="radio2" type="radio" name="index" value="valueB"  > employed to unemployed </label> 
+  
+  <label class="radiosLMR">
+  <input id="radio3" type="radio" name="index" value="valueC" > employed to not in labor force</label> 
+
+</div>
+
+<div id="lmr" >
+
+<div id="tooltip2" class="hidden">
+
+</div>
+
+</body>
